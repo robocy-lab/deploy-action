@@ -58,6 +58,7 @@ mkdir -p "\$(dirname "\$DEPLOY_DIR")"
 
 if [ -d "\$DEPLOY_DIR" ]; then
     cd "\$DEPLOY_DIR"
+    git remote set-url origin "$REPO_URL"
     git fetch origin
     git reset --hard "origin/\${BRANCH}"
     git clean -fd
