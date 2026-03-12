@@ -53,6 +53,7 @@ runs:
         DEPLOY_ENVIRONMENT: ${{ inputs.environment }}
         COMPOSE_FILE: ${{ inputs.compose-file }}
         GITHUB_REPOSITORY: ${{ github.repository }}
+        CLOUDFLARE_TUNNEL: ${{ inputs.cloudflare-tunnel }}
         GITHUB_REF: ${{ github.ref }}
       run: |
         ${{ github.action_path }}/deploy.sh
