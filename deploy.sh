@@ -32,7 +32,7 @@ deploy_to_server() {
                 -o /usr/local/bin/cloudflared
             chmod +x /usr/local/bin/cloudflared
         fi
-        ssh_opts="$ssh_opts -o ProxyCommand='cloudflared access ssh --hostname %h'"
+        ssh_opts="$ssh_opts -o ProxyCommand=cloudflared access ssh --hostname %h"
     fi
 
     ssh $ssh_opts "${ssh_user}@${ssh_host}" /bin/bash << EOF
