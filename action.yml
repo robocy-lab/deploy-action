@@ -9,7 +9,7 @@ inputs:
     description: 'Use Cloudflare tunnel for SSH (host must be CF tunnel hostname)'
     required: false
     default: 'false'
-    ssh-user:
+  ssh-user:
     description: 'SSH user (default: root)'
     required: false
     default: 'root'
