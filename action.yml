@@ -1,0 +1,58 @@
+name: 'Docker Compose Deploy'
+description: 'Deploy via SSH using docker-compose'
+
+inputs:
+  host:
+    description: 'Server hostname or IP address'
+    required: true
+  cloudflare-tunnel:
+    description: 'Use Cloudflare tunnel for SSH (host must be CF tunnel hostname)'
+    required: false
+    default: 'false'
+    ssh-user:
+    description: 'SSH user (default: root)'
+    required: false
+    default: 'root'
+  ssh-key:
+    description: 'SSH private key for authentication'
+    required: true
+  github-token:
+    description: 'GitHub token for private repos'
+    required: false
+    default: ${{ github.token }}
+  environment:
+    description: 'Environment suffix (dev/staging/prod)'
+    required: false
+    default: ''
+  compose-file:
+    description: 'Docker compose file name'
+    required: false
+    default: 'docker-compose.yml'
+  directory:
+    description: 'Deployment directory'
+    required: false
+    default: ''
+
+outputs:
+  status:
+    description: 'Deployment status'
+    value: ${{ steps.deploy.outputs.status }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Deploy via SSH
+      id: deploy
+      shell: bash
+      env:
+        HOST: ${{ inputs.host }}
+        SSH_USER: ${{ inputs.ssh-user }}
+        SSH_KEY: ${{ inputs.ssh-key }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        DEPLOY_DIRECTORY: ${{ inputs.directory }}
+        DEPLOY_ENVIRONMENT: ${{ inputs.environment }}
+        COMPOSE_FILE: ${{ inputs.compose-file }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
+        GITHUB_REF: ${{ github.ref }}
+      run: |
+        ${{ github.action_path }}/deploy.sh
