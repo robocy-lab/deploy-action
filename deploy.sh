@@ -27,7 +27,7 @@ deploy_to_server() {
 
     if [[ "${CLOUDFLARE_TUNNEL:-false}" == "true" ]]; then
         if ! command -v cloudflared &> /dev/null; then
-            log_info "Installing cloudflared..."
+            log "Installing cloudflared..."
             curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 \
                 -o /usr/local/bin/cloudflared
             chmod +x /usr/local/bin/cloudflared
