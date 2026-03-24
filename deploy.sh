@@ -17,6 +17,7 @@ deploy_to_server() {
 
     local project_name="${repo_name}"
     [[ -n "$environment" ]] && project_name="${repo_name}-${environment}"
+    project_name="${project_name,,}"
 
     local ssh_key_file
     ssh_key_file=$(mktemp)
