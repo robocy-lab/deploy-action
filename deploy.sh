@@ -60,7 +60,7 @@ mkdir -p "\$(dirname "\$DEPLOY_DIR")"
 if [ -d "\$DEPLOY_DIR" ]; then
     cd "\$DEPLOY_DIR"
     git remote set-url origin "$REPO_URL"
-    git fetch origin
+    git fetch --unshallow origin 2>/dev/null || git fetch origin
     git reset --hard "origin/\${BRANCH}"
     git clean -fd
 else
@@ -70,9 +70,10 @@ fi
 
 # Init submodules if .gitmodules exists
 if [ -f .gitmodules ]; then
-    git config credential.helper store
+    git config --global credential.helper store
     echo "${repo_url%%github.com/*}github.com" > ~/.git-credentials
-    git submodule update --init --recursive
+    git submodule sync --recursive
+    git submodule update --init --recursive --depth 1
 fi
 
 [[ ! -f "\$COMPOSE_FILE" ]] && { echo "[ERROR] \$COMPOSE_FILE not found"; exit 1; }
