@@ -73,7 +73,7 @@ if [ -f .gitmodules ]; then
     git config --global credential.helper store
     echo "${repo_url%%github.com/*}github.com" > ~/.git-credentials
     git submodule sync --recursive
-    git submodule update --init --recursive --depth 1
+    git submodule update --init --recursive --force
 fi
 
 [[ ! -f "\$COMPOSE_FILE" ]] && { echo "[ERROR] \$COMPOSE_FILE not found"; exit 1; }
