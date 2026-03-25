@@ -68,6 +68,13 @@ else
     cd "\$DEPLOY_DIR"
 fi
 
+# Init submodules if .gitmodules exists
+if [ -f .gitmodules ]; then
+    git config credential.helper store
+    echo "${repo_url%%github.com/*}github.com" > ~/.git-credentials
+    git submodule update --init --recursive
+fi
+
 [[ ! -f "\$COMPOSE_FILE" ]] && { echo "[ERROR] \$COMPOSE_FILE not found"; exit 1; }
 
 if command -v docker-compose &> /dev/null; then
