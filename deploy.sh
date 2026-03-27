@@ -95,7 +95,6 @@ else
     exit 1
 fi
 
-\$COMPOSE_CMD -p "\${PROJECT_NAME}" -f "\$COMPOSE_FILE" down 2>/dev/null || true
 \$COMPOSE_CMD -p "\${PROJECT_NAME}" -f "\$COMPOSE_FILE" up -d --build
 
 sleep 3
