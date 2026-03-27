@@ -14,10 +14,14 @@ deploy_to_server() {
     local deploy_dir="${7:-/var/apps/${repo_name}}"
     local environment="${8:-}"
     local compose_file="${9:-docker-compose.yml}"
+    local env_vars="${10:-}"
 
     local project_name="${repo_name}"
     [[ -n "$environment" ]] && project_name="${repo_name}-${environment}"
     project_name="${project_name,,}"
+
+    local env_vars_b64=""
+    [[ -n "$env_vars" ]] && env_vars_b64=$(printf '%s' "$env_vars" | base64 | tr -d '\n')
 
     local ssh_key_file
     ssh_key_file=$(mktemp)
@@ -76,6 +80,10 @@ if [ -f .gitmodules ]; then
     git submodule update --init --recursive --force
 fi
 
+if [ -n "$env_vars_b64" ]; then
+    echo "$env_vars_b64" | base64 -d > .env
+fi
+
 [[ ! -f "\$COMPOSE_FILE" ]] && { echo "[ERROR] \$COMPOSE_FILE not found"; exit 1; }
 
 if command -v docker-compose &> /dev/null; then
@@ -116,6 +124,7 @@ DEPLOY_DIRECTORY="${DEPLOY_DIRECTORY:-}"
 DEPLOY_ENVIRONMENT="${DEPLOY_ENVIRONMENT:-}"
 COMPOSE_FILE="${COMPOSE_FILE:-docker-compose.yml}"
 DEPLOY_BRANCH="${DEPLOY_BRANCH:-}"
+ENV_VARS="${ENV_VARS:-}"
 
 [[ -z "$SSH_HOST" ]]          && { err "HOST is required"; exit 1; }
 [[ -z "$SSH_KEY" ]]           && { err "SSH_KEY is required"; exit 1; }
@@ -136,4 +145,4 @@ REPO_NAME=$(basename "$GITHUB_REPOSITORY")
 REPO_URL="https://github.com/${GITHUB_REPOSITORY}.git"
 [[ -n "$GITHUB_TOKEN" ]] && REPO_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 
-deploy_to_server "$SSH_HOST" "$SSH_USER" "$SSH_KEY" "$REPO_URL" "$REPO_NAME" "$BRANCH_NAME" "$DEPLOY_DIRECTORY" "$DEPLOY_ENVIRONMENT" "$COMPOSE_FILE"
+deploy_to_server "$SSH_HOST" "$SSH_USER" "$SSH_KEY" "$REPO_URL" "$REPO_NAME" "$BRANCH_NAME" "$DEPLOY_DIRECTORY" "$DEPLOY_ENVIRONMENT" "$COMPOSE_FILE" "$ENV_VARS"
